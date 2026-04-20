@@ -1,19 +1,53 @@
-import { Button } from "@/components/ui/button"
+"use client"
 
-export default function Page() {
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
+
+import { SiteHeader } from "@/components/site-header"
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { useSession } from "@/hooks/use-session"
+
+export default function HomePage() {
+  const { session, ready } = useSession()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!ready || !session) return
+    router.replace(session.role === "trainer" ? "/trainer" : "/meals")
+  }, [ready, session, router])
+
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-        <div className="font-mono text-xs text-muted-foreground">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
-      </div>
+    <div className="min-h-svh">
+      <SiteHeader />
+      <main className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 py-10">
+        <Card>
+          <CardHeader>
+            <CardTitle>Diet tracker</CardTitle>
+            <CardDescription>
+              Log your daily meals and let your trainer review them. Sign up as a
+              trainer to coach others, or as a user to log your meals.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <Button asChild>
+                <Link href="/register">Get started</Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link href="/login">Log in</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </main>
     </div>
   )
 }
